@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en-US">
+<head>
+	<meta charset="UTF-8">
+	<title>Warhol Canvas</title>
+  <link rel="stylesheet" href="warhol.css" />
+</head>
+<body>
+
+  <div id="app">
+
+    <canvas data-id="0" width="300" height="350"></canvas>
+    <canvas data-id="1" width="300" height="350"></canvas>
+    <canvas data-id="2" width="300" height="350"></canvas>
+    <br />
+    <canvas data-id="3" width="300" height="350"></canvas>
+    <canvas data-id="4" width="300" height="350"></canvas>
+    <canvas data-id="5" width="300" height="350"></canvas>
+
+    <div id="shades" class="toolbar">
+      <button data-shade="dark" type="button">Dark</button>
+      <button data-shade="light" type="button">Light</button>
+    </div>
+    <button id="clearCanvas" type="button">Clear</button>
+
+    <div id="sizes" class="toolbar">
+      <button data-radius="2" type="button">Small</button>
+      <button data-radius="5" type="button">Normal</button>
+      <button data-radius="10" type="button">Large</button>
+      <button data-radius="20" type="button">Huge</button>
+    </div>
+
+  </div>
+
+  <script type="text/javascript" src="https://code.jquery.com/jquery-1.4.2.min.js"></script>
+  <script type="text/javascript" src="warhol.js"></script>
+</body>
+</html>
