@@ -12,11 +12,7 @@ const colours = {
 }
 
 // Holds the current state of the entire artwork
-let clickX = new Array()
-let clickY = new Array()
-let clickDrag = new Array()
-let clickShade = new Array()
-let clickRadius = new Array()
+let drawPath = new Array()
 
 // Holds the current state
 let curShade = 'dark'
@@ -105,11 +101,13 @@ const prepareCanvas = canvasId => {
 }
 
 const addClick = (x, y, dragging) => {
-  clickX.push(x)
-  clickY.push(y)
-  clickDrag.push(dragging)
-  clickShade.push(curShade)
-  clickRadius.push(curRadius)
+  drawPath.push({
+    x,
+    y,
+    dragging,
+    shade: curShade,
+    radius: curRadius,
+  })
 }
 
 const clearCanvas = () => {
@@ -129,22 +127,22 @@ const redraw = () => {
     ctx.lineJoin = 'round'
   })
 
-  for (let i = 0; i < clickX.length; i++) {
+  for (let i = 0; i < drawPath.length; i++) {
     context.forEach(ctx => {
       const canvasId = ctx.canvas.dataset.id
-      const shade = clickShade[i]
+      const shade = drawPath[i].shade
       const strokeColour = colours[shade][canvasId]
 
       ctx.beginPath()
-      if (clickDrag[i] && i) {
-        ctx.moveTo(clickX[i - 1], clickY[i - 1])
+      if (drawPath[i].dragging && i) {
+        ctx.moveTo(drawPath[i - 1].x, drawPath[i - 1].y)
       } else {
-        ctx.moveTo(clickX[i] - 1, clickY[i])
+        ctx.moveTo(drawPath[i].x - 1, drawPath[i].y)
       }
-      ctx.lineTo(clickX[i], clickY[i])
+      ctx.lineTo(drawPath[i].x, drawPath[i].y)
       ctx.closePath()
       ctx.strokeStyle = strokeColour
-      ctx.lineWidth = clickRadius[i]
+      ctx.lineWidth = drawPath[i].radius
       ctx.stroke()
     })
   }
@@ -164,11 +162,7 @@ const main = () => {
   })
 
   $('#clearCanvas').click(() => {
-    clickX = new Array()
-    clickY = new Array()
-    clickDrag = new Array()
-    clickShade = new Array()
-    clickRadius = new Array()
+    drawPath = new Array()
     clearCanvas()
   })
 }
