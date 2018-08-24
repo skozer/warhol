@@ -2,6 +2,8 @@
 // http://www.williammalone.com/articles/create-html5-canvas-javascript-drawing-app/#demo-simple
 // https://hacks.mozilla.org/2009/06/pop-art-video/
 // http://bencentra.com/code/2014/12/05/html5-canvas-touch-events.html
+// https://github.com/demihe/HTML5-Canvas-Paint-Application
+// https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Optimizing_canvas
 
 const numBoards = 6
 const context = new Array(numBoards)
@@ -11,160 +13,136 @@ const colours = {
   background: ['#fefa08', '#0279ea', '#281f80', '#ee8609', '#e30f21', '#90b70b'],
 }
 
-// Holds the current state of the entire artwork
-let drawPath = new Array()
+// Initialize mouse coordinates to (0, 0)
+let mouse = {x: 0, y: 0}
+let shade = 'dark'
+let radius = 5
 
-// Holds the current state
-let curShade = 'dark'
-let curRadius = 5
-let paint = false
+// Paint
+const paint = () => {
+  context.forEach(ctx => {
+    const id = ctx.canvas.dataset.id
+    const colour = colours[shade][id]
 
-const prepareCanvas = canvasId => {
-  const selector = $('canvas[data-id="' + canvasId + '"]')
-  const ctx = selector[0].getContext('2d')
-  context[canvasId] = ctx
-
-  // Set the background colour
-  ctx.fillStyle = colours.background[canvasId]
-  ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-
-  // Set up touch events for mobile, etc
-  ctx.canvas.addEventListener(
-    'touchstart',
-    function(e) {
-      mousePos = getTouchPos(ctx.canvas, e)
-      var touch = e.touches[0]
-      var mouseEvent = new MouseEvent('mousedown', {
-        clientX: touch.clientX,
-        clientY: touch.clientY,
-      })
-      ctx.canvas.dispatchEvent(mouseEvent)
-    },
-    false
-  )
-  ctx.canvas.addEventListener(
-    'touchend',
-    function(e) {
-      var mouseEvent = new MouseEvent('mouseup', {})
-      ctx.canvas.dispatchEvent(mouseEvent)
-    },
-    false
-  )
-  ctx.canvas.addEventListener(
-    'touchmove',
-    function(e) {
-      var touch = e.touches[0]
-      var mouseEvent = new MouseEvent('mousemove', {
-        clientX: touch.clientX,
-        clientY: touch.clientY,
-      })
-      ctx.canvas.dispatchEvent(mouseEvent)
-    },
-    false
-  )
-
-  // Get the position of a touch relative to the canvas
-  function getTouchPos(canvasDom, touchEvent) {
-    var rect = canvasDom.getBoundingClientRect()
-    return {
-      x: touchEvent.touches[0].clientX - rect.left,
-      y: touchEvent.touches[0].clientY - rect.top,
-    }
-  }
-
-  // Add mouse events
-  selector.mousedown(e => {
-    // Mouse down location
-    const mouseX = e.pageX - e.target.offsetLeft
-    const mouseY = e.pageY - e.target.offsetTop
-
-    paint = true
-    addClick(mouseX, mouseY, false)
-    redraw()
-  })
-
-  selector.mousemove(e => {
-    if (paint) {
-      addClick(e.pageX - e.target.offsetLeft, e.pageY - e.target.offsetTop, true)
-      redraw()
-    }
-  })
-
-  selector.mouseup(() => {
-    paint = false
-    redraw()
-  })
-
-  selector.mouseleave(() => {
-    paint = false
+    ctx.lineTo(mouse.x, mouse.y)
+    ctx.lineWidth = radius
+    ctx.lineJoin = 'round'
+    ctx.lineCap = 'round'
+    ctx.strokeStyle = colour
+    ctx.stroke()
   })
 }
 
-const addClick = (x, y, dragging) => {
-  drawPath.push({
-    x,
-    y,
-    dragging,
-    shade: curShade,
-    radius: curRadius,
+// User clicks down on canvas to trigger paint
+const handleMouseDown = e => {
+  context.forEach(ctx => {
+    ctx.beginPath()
+    ctx.moveTo(mouse.x, mouse.y)
   })
+  e.target.addEventListener('mousemove', paint, false)
 }
 
+// Find mouse coordinates relative to canvas
+const handleMouseMove = e => {
+  mouse.x = e.pageX - e.target.offsetLeft
+  mouse.y = e.pageY - e.target.offsetTop
+}
+
+// When mouse lifts up, line stops painting
+const handleMouseUp = e => {
+  e.target.removeEventListener('mousemove', paint, false)
+}
+
+// When mouse leaves canvas, line stops painting
+const handleMouseOut = e => {
+  e.target.removeEventListener('mousemove', paint, false)
+}
+
+// Convert touchstart event to a mousedown event
+const handleTouchStart = e => {
+  const canvas = e.target
+  const touch = e.touches[0]
+
+  // Convert touch position to mouse position
+  const rect = canvas.getBoundingClientRect()
+  mouse.x = touch.clientX - rect.left
+  mouse.y = touch.clientY - rect.top
+
+  const mouseEvent = new MouseEvent('mousedown', {
+    clientX: touch.clientX,
+    clientY: touch.clientY,
+  })
+  canvas.dispatchEvent(mouseEvent)
+}
+
+// Convert touchmove event to a mousemove event
+const handleTouchMove = e => {
+  const canvas = e.target
+  const touch = e.touches[0]
+  const mouseEvent = new MouseEvent('mousemove', {
+    clientX: touch.clientX,
+    clientY: touch.clientY,
+  })
+  canvas.dispatchEvent(mouseEvent)
+}
+
+// Convert touchend event to a mouseup event
+const handleTouchEnd = e => {
+  const canvas = e.target
+  const mouseEvent = new MouseEvent('mouseup', {})
+  canvas.dispatchEvent(mouseEvent)
+}
+
+// Set the background colour
 const clearCanvas = () => {
   context.forEach(ctx => {
-    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
-
-    // Set the background colour
-    ctx.fillStyle = colours.background[ctx.canvas.dataset.id]
+    const id = ctx.canvas.dataset.id
+    ctx.fillStyle = colours.background[id]
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
   })
 }
 
-const redraw = () => {
-  clearCanvas()
-
-  context.forEach(ctx => {
-    ctx.lineJoin = 'round'
-  })
-
-  for (let i = 0; i < drawPath.length; i++) {
-    context.forEach(ctx => {
-      const canvasId = ctx.canvas.dataset.id
-      const shade = drawPath[i].shade
-      const strokeColour = colours[shade][canvasId]
-
-      ctx.beginPath()
-      if (drawPath[i].dragging && i) {
-        ctx.moveTo(drawPath[i - 1].x, drawPath[i - 1].y)
-      } else {
-        ctx.moveTo(drawPath[i].x - 1, drawPath[i].y)
-      }
-      ctx.lineTo(drawPath[i].x, drawPath[i].y)
-      ctx.closePath()
-      ctx.strokeStyle = strokeColour
-      ctx.lineWidth = drawPath[i].radius
-      ctx.stroke()
-    })
+// Set the shade of the brush
+const handleShadeClick = e => {
+  if (e.target.tagName === 'BUTTON') {
+    shade = e.target.dataset.shade
   }
 }
 
-const main = () => {
-  for (let i = 0; i < numBoards; i++) {
-    prepareCanvas(i)
+// Set the size of the brush
+const handleSizeClick = e => {
+  if (e.target.tagName === 'BUTTON') {
+    radius = e.target.dataset.radius
   }
-
-  $('#shades button').click(e => {
-    curShade = e.target.dataset.shade
-  })
-
-  $('#sizes button').click(e => {
-    curRadius = e.target.dataset.radius
-  })
-
-  $('#clearCanvas').click(() => {
-    drawPath = new Array()
-    clearCanvas()
-  })
 }
 
-main()
+// Load the contexts into memory and add event listeners to the canvases
+const prepareCanvases = () => {
+  for (id = 0; id < numBoards; id++) {
+    const canvas = document.querySelector(`canvas[data-id="${id}"]`)
+    const ctx = canvas.getContext('2d')
+    context[id] = ctx
+
+    // Set the background colour
+    ctx.fillStyle = colours.background[id]
+    ctx.fillRect(0, 0, canvas.width, canvas.height)
+
+    // Event listeners that will trigger the paint functions
+    canvas.addEventListener('mousedown', handleMouseDown, false)
+    canvas.addEventListener('mousemove', handleMouseMove, false)
+    canvas.addEventListener('mouseup', handleMouseUp, false)
+    canvas.addEventListener('mouseout', handleMouseOut, false)
+    canvas.addEventListener('touchstart', handleTouchStart, false)
+    canvas.addEventListener('touchmove', handleTouchMove, false)
+    canvas.addEventListener('touchend', handleTouchEnd, false)
+  }
+}
+
+const prepareToolbar = () => {
+  document.querySelector('#clear').addEventListener('click', clearCanvas)
+  document.querySelector('#shades').addEventListener('click', handleShadeClick)
+  document.querySelector('#sizes').addEventListener('click', handleSizeClick)
+}
+
+prepareCanvases()
+prepareToolbar()
