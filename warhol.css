@@ -13,11 +13,10 @@ body {
 
 canvas {
   margin: -2px;
- }
+  mix-blend-mode: multiply;
+}
 
-/* canvas[data-id="0"] { background-color: #fefa08; }
-canvas[data-id="1"] { background-color: #0279ea; }
-canvas[data-id="2"] { background-color: #281f80; }
-canvas[data-id="3"] { background-color: #ee8609; }
-canvas[data-id="4"] { background-color: #e30f21; }
-canvas[data-id="5"] { background-color: #90b70b; } */
+#app {
+  /* Bit hacky */
+  background-image: url("marilyn-monroe.jpg");
+}
