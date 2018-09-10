@@ -44,6 +44,8 @@ const saveState = () => {
   if (history.length > maxStates) {
     history.length = maxStates
   }
+
+  handleStateChange()
   console.log('Saved state')
   console.log('Num states: ' + history.length)
 }
@@ -56,6 +58,8 @@ const undoState = () => {
     const id = ctx.canvas.dataset.id
     ctx.putImageData(previousState[id], 0, 0)
   })
+
+  handleStateChange()
   console.log('Undo state')
   console.log('Num states: ' + history.length)
 }
@@ -121,6 +125,22 @@ const handleTouchEnd = e => {
   canvas.dispatchEvent(mouseEvent)
 }
 
+// Handle undo click
+const handleUndo = () => {
+  if (history.length > 1) {
+    undoState()
+  }
+}
+
+// Handle state change
+const handleStateChange = () => {
+  if (history.length > 1) {
+    document.getElementById('undo').removeAttribute('disabled')
+  } else {
+    document.getElementById('undo').setAttribute('disabled', 'disabled')
+  }
+}
+
 // Set the background colour
 const clearCanvas = () => {
   context.forEach(ctx => {
@@ -169,6 +189,7 @@ const prepareCanvases = () => {
 
 const prepareToolbar = () => {
   document.querySelector('#clear').addEventListener('click', clearCanvas)
+  document.querySelector('#undo').addEventListener('click', handleUndo)
   document.querySelector('#shades').addEventListener('click', handleShadeClick)
   document.querySelector('#sizes').addEventListener('click', handleSizeClick)
 }
