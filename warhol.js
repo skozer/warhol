@@ -142,7 +142,7 @@ const handleStateChange = () => {
 }
 
 // Set the background colour
-const clearCanvas = () => {
+const handleClearCanvas = () => {
   context.forEach(ctx => {
     const id = ctx.canvas.dataset.id
     ctx.fillStyle = colours.background[id]
@@ -188,7 +188,7 @@ const prepareCanvases = () => {
 }
 
 const prepareToolbar = () => {
-  document.querySelector('#clear').addEventListener('click', clearCanvas)
+  document.querySelector('#clear').addEventListener('click', handleClearCanvas)
   document.querySelector('#undo').addEventListener('click', handleUndo)
   document.querySelector('#shades').addEventListener('click', handleShadeClick)
   document.querySelector('#sizes').addEventListener('click', handleSizeClick)
