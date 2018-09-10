@@ -6,7 +6,9 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Optimizing_canvas
 
 const numBoards = 6
+const maxStates = 10
 const context = new Array(numBoards)
+const history = new Array()
 const colours = {
   dark: ['#201f7c', '#ec027b', '#e9061d', '#7d4292', '#212025', '#ed6c03'],
   light: ['#8cb21d', '#fefb00', '#f693c3', '#7dbbf4', '#fcfafb', '#fcfea8'],
@@ -33,6 +35,31 @@ const paint = () => {
   })
 }
 
+// Save state
+const saveState = () => {
+  const currentState = context.map(
+    ctx => ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height)
+  )
+  history.unshift(currentState)
+  if (history.length > maxStates) {
+    history.length = maxStates
+  }
+  console.log('Saved state')
+  console.log('Num states: ' + history.length)
+}
+
+// Undo state
+const undoState = () => {
+  history.shift()
+  const previousState = history[0]
+  context.forEach(ctx => {
+    const id = ctx.canvas.dataset.id
+    ctx.putImageData(previousState[id], 0, 0)
+  })
+  console.log('Undo state')
+  console.log('Num states: ' + history.length)
+}
+
 // User clicks down on canvas to trigger paint
 const handleMouseDown = e => {
   context.forEach(ctx => {
@@ -50,6 +77,7 @@ const handleMouseMove = e => {
 
 // When mouse lifts up, line stops painting
 const handleMouseUp = e => {
+  saveState()
   e.target.removeEventListener('mousemove', paint, false)
 }
 
@@ -100,6 +128,7 @@ const clearCanvas = () => {
     ctx.fillStyle = colours.background[id]
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
   })
+  saveState()
 }
 
 // Set the shade of the brush
@@ -145,4 +174,5 @@ const prepareToolbar = () => {
 }
 
 prepareCanvases()
+saveState()
 prepareToolbar()
