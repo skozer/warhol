@@ -11,12 +11,52 @@ body {
   align-items: center;
 }
 
+.main-layout {
+  display: grid;
+  width: 100%;
+  height: 100%;
+  grid-template-columns: 25px 3fr 20px 1fr 25px;
+  grid-template-rows: 25px 1fr 25px;
+  grid-gap: 1px 1px;
+  grid-template-areas: ". . . . ." ". app . tools ." ". . . . .";
+}
+
+.tools { grid-area: tools; }
+
+#app {
+  grid-area: app;
+  font-size: 0;
+  height: 100%;
+  width: 100%;
+  touch-action: none;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  grid-template-rows: 1fr 1fr;
+  grid-template-areas: "c0 c1 c2" "c3 c4 c5";
+}
+
+.c0 { grid-area: c0;}
+.c1 { grid-area: c1;}
+.c2 { grid-area: c2;}
+.c3 { grid-area: c3;}
+.c4 { grid-area: c4;}
+.c5 { grid-area: c5;}
+
 canvas {
-  margin: -2px;
+  width: 100%;
+  height: 100%;
   mix-blend-mode: multiply;
 }
 
-#app {
-  /* Bit hacky */
-  background-image: url("marilyn-monroe.jpg");
+.canvas {
+  background-image: url("img/bg/mao-zedong.jpg");
+  background-size: cover;
+}
+
+.toolbar img {
+  padding: 10px;
+  height: 70px;
+  width: 70px;
+  border-radius:50%;
+  border: 3px solid black;
 }

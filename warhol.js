@@ -116,12 +116,17 @@ const handleSizeClick = e => {
   }
 }
 
+
 // Load the contexts into memory and add event listeners to the canvases
 const prepareCanvases = () => {
   for (id = 0; id < numBoards; id++) {
     const canvas = document.querySelector(`canvas[data-id="${id}"]`)
     const ctx = canvas.getContext('2d')
     context[id] = ctx
+
+    // Set size of canvas
+    canvas.width = canvas.clientWidth;
+    canvas.height = canvas.clientHeight;
 
     // Set the background colour
     ctx.fillStyle = colours.background[id]

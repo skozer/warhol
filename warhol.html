@@ -1,39 +1,81 @@
 <!doctype html>
 <html lang="en-US">
 <head>
-	<meta charset="UTF-8">
-	<title>Warhol Canvas</title>
-  <link rel="stylesheet" href="warhol.css" />
+    <meta charset="UTF-8">
+    <title>Warhol Canvas</title>
+    <link rel="stylesheet" href="warhol.css"/>
 </head>
 <body>
 
-  <div id="app">
+<div class="main-layout">
 
-    <canvas data-id="0" width="300" height="350"></canvas>
-    <canvas data-id="1" width="300" height="350"></canvas>
-    <canvas data-id="2" width="300" height="350"></canvas>
-    <br />
-    <canvas data-id="3" width="300" height="350"></canvas>
-    <canvas data-id="4" width="300" height="350"></canvas>
-    <canvas data-id="5" width="300" height="350"></canvas>
+    <div id="app">
 
-    <div id="shades" class="toolbar">
-      <button data-shade="dark" type="button">Dark</button>
-      <button data-shade="light" type="button">Light</button>
-      <button data-shade="background" type="button">Erasor</button>
+        <div class="canvas c0">
+            <canvas data-id="0"></canvas>
+        </div>
+        <div class="canvas c1">
+            <canvas data-id="1"></canvas>
+        </div>
+        <div class="canvas c2">
+            <canvas data-id="2"></canvas>
+        </div>
+        <div class="canvas c3">
+            <canvas data-id="3"></canvas>
+        </div>
+        <div class="canvas c4">
+            <canvas data-id="4"></canvas>
+        </div>
+        <div class="canvas c5">
+            <canvas data-id="5"></canvas>
+        </div>
+
+
     </div>
+    <div class="tools">
+        <h1>Pop Art: Andy Warhol</h1>
+        <div id="tool" class="toolbar">
+            <img src="img/tools/pencil.svg">
+            <img src="img/tools/eraser.svg">
+        </div>
+        <div id="size" class="toolbar">
+            <img src="img/tools/circle.svg">
+            <img src="img/tools/circle.svg">
+            <img src="img/tools/circle.svg">
+            <img src="img/tools/circle.svg">
+        </div>
+        <div id="shade" class="toolbar">
+            <img src="img/tools/colourwheel.jpg">
+            <img src="img/tools/colourwheel.jpg">
+            <img src="img/tools/colourwheel.jpg">
+            <img src="img/tools/colourwheel.jpg">
+        </div>
+        <div id="bg" class="toolbar">
+            <img src="img/bg/marilyn-monroe.jpg">
+            <img src="img/bg/mao-zedong.jpg">
+        </div>
+        <div id="action" class="toolbar">
+            <img src="img/tools/help.svg">
+            <img src="img/tools/undo.svg">
+            <img src="img/tools/delete.svg">
+        </div>
 
-    <button id="clear" type="button">Clear</button>
+        <div id="sizes" class="toolbar">
+            <button data-radius="2" type="button">Small</button>
+            <button data-radius="5" type="button">Normal</button>
+            <button data-radius="10" type="button">Large</button>
+            <button data-radius="20" type="button">Huge</button>
+        </div>
+        <div id="shades" class="toolbar">
+            <button data-shade="dark" type="button">Dark</button>
+            <button data-shade="light" type="button">Light</button>
+            <button data-shade="background" type="button">Eraser</button>
+        </div>
 
-    <div id="sizes" class="toolbar">
-      <button data-radius="2" type="button">Small</button>
-      <button data-radius="5" type="button">Normal</button>
-      <button data-radius="10" type="button">Large</button>
-      <button data-radius="20" type="button">Huge</button>
+        <button id="clear" type="button">Clear</button>
     </div>
+</div>
 
-  </div>
-
-  <script type="text/javascript" src="warhol.js"></script>
+<script type="text/javascript" src="warhol.js"></script>
 </body>
 </html>
