@@ -6,7 +6,9 @@
 // https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Optimizing_canvas
 
 const numBoards = 6
+const maxStates = 10
 const context = new Array(numBoards)
+const history = new Array()
 const colours = {
   dark: ['#201f7c', '#ec027b', '#e9061d', '#7d4292', '#212025', '#ed6c03'],
   light: ['#8cb21d', '#fefb00', '#f693c3', '#7dbbf4', '#fcfafb', '#fcfea8'],
@@ -33,6 +35,35 @@ const paint = () => {
   })
 }
 
+// Save state
+const saveState = () => {
+  const currentState = context.map(
+    ctx => ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height)
+  )
+  history.unshift(currentState)
+  if (history.length > maxStates) {
+    history.length = maxStates
+  }
+
+  handleStateChange()
+  console.log('Saved state')
+  console.log('Num states: ' + history.length)
+}
+
+// Undo state
+const undoState = () => {
+  history.shift()
+  const previousState = history[0]
+  context.forEach(ctx => {
+    const id = ctx.canvas.dataset.id
+    ctx.putImageData(previousState[id], 0, 0)
+  })
+
+  handleStateChange()
+  console.log('Undo state')
+  console.log('Num states: ' + history.length)
+}
+
 // User clicks down on canvas to trigger paint
 const handleMouseDown = e => {
   context.forEach(ctx => {
@@ -50,6 +81,7 @@ const handleMouseMove = e => {
 
 // When mouse lifts up, line stops painting
 const handleMouseUp = e => {
+  saveState()
   e.target.removeEventListener('mousemove', paint, false)
 }
 
@@ -93,13 +125,30 @@ const handleTouchEnd = e => {
   canvas.dispatchEvent(mouseEvent)
 }
 
+// Handle undo click
+const handleUndo = () => {
+  if (history.length > 1) {
+    undoState()
+  }
+}
+
+// Handle state change
+const handleStateChange = () => {
+  if (history.length > 1) {
+    document.getElementById('undo').removeAttribute('disabled')
+  } else {
+    document.getElementById('undo').setAttribute('disabled', 'disabled')
+  }
+}
+
 // Set the background colour
-const clearCanvas = () => {
+const handleClearCanvas = () => {
   context.forEach(ctx => {
     const id = ctx.canvas.dataset.id
     ctx.fillStyle = colours.background[id]
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
   })
+  saveState()
 }
 
 // Set the shade of the brush
@@ -139,10 +188,12 @@ const prepareCanvases = () => {
 }
 
 const prepareToolbar = () => {
-  document.querySelector('#clear').addEventListener('click', clearCanvas)
+  document.querySelector('#clear').addEventListener('click', handleClearCanvas)
+  document.querySelector('#undo').addEventListener('click', handleUndo)
   document.querySelector('#shades').addEventListener('click', handleShadeClick)
   document.querySelector('#sizes').addEventListener('click', handleSizeClick)
 }
 
 prepareCanvases()
+saveState()
 prepareToolbar()
