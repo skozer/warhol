@@ -1,15 +1,28 @@
+@font-face {
+  font-family: "Clifton";
+  src: url("font/CliftonTrial-Regular.otf");
+}
+@font-face {
+  font-family: "Clifton-Italic";
+  src: url("font/CliftonTrial-Italic.otf");
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
+  font-family: "Clifton", sans-serif;
 }
 
 body {
-  background-color: white;
+  background-color: #d3ffff;
   height: 100vh;
   display: flex;
   justify-content: center;
   align-items: center;
+  touch-action: none;
 }
+
+
 
 .main-layout {
   display: grid;
@@ -59,4 +72,21 @@ canvas {
   width: 70px;
   border-radius:50%;
   border: 3px solid black;
+  background-color: white;
+}
+
+.toolbar-tool {
+
+}
+
+.header {
+  text-align: center;
+  padding-bottom: 20px;
+}
+
+h1 {
+  font-size: 3vw;
+}
+h2 {
+  font-size: 2vw;
 }

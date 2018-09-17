@@ -8,9 +8,8 @@
 <body>
 
 <div class="main-layout">
-
+    <!--Canvases-->
     <div id="app">
-
         <div class="canvas c0">
             <canvas data-id="0"></canvas>
         </div>
@@ -29,11 +28,13 @@
         <div class="canvas c5">
             <canvas data-id="5"></canvas>
         </div>
-
-
     </div>
+    <!--Toolbar-->
     <div class="tools">
-        <h1>Pop Art: Andy Warhol</h1>
+        <div class="header">
+            <h1>Pop Art</h1>
+            <h2>Andy Warhol</h2>
+        </div>
         <div id="tool" class="toolbar">
             <img src="img/tools/pencil.svg">
             <img src="img/tools/eraser.svg">
@@ -45,7 +46,6 @@
             <img src="img/tools/circle.svg">
         </div>
         <div id="shade" class="toolbar">
-            <img src="img/tools/colourwheel.jpg">
             <img src="img/tools/colourwheel.jpg">
             <img src="img/tools/colourwheel.jpg">
             <img src="img/tools/colourwheel.jpg">
@@ -75,6 +75,8 @@
         <button id="clear" type="button">Clear</button>
     </div>
 </div>
+
+
 
 <script type="text/javascript" src="warhol.js"></script>
 </body>
