@@ -144,12 +144,16 @@ const handleStateChange = () => {
 }
 
 // Set the background colour
-const handleClearCanvas = () => {
+const handleClearCanvas = (evt, clearHistory = false) => {
   context.forEach(ctx => {
     const id = ctx.canvas.dataset.id
     ctx.fillStyle = colours.background[id]
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
   })
+  if (clearHistory) {
+    history.length = 0
+    MicroModal.show('welcome-modal')
+  }
   saveState()
 }
 
@@ -196,11 +200,16 @@ const prepareToolbar = () => {
   document.querySelector('#sizes').addEventListener('click', handleSizeClick)
 }
 
+const prepareModals = () => {
+  document.getElementById('reset-canvas').addEventListener('click', evt => (handleClearCanvas(evt, true)))
+  MicroModal.show('welcome-modal')
+}
+
 const startTimer = () => {
   idleInterval = setInterval(() => {
     idleTime++
     if (idleTime > idleTimeout) {
-      console.log('Time\'s up!')
+      MicroModal.show('inactivity-modal')
       clearInterval(idleInterval)
     }
   }, 1000) // increment the idle time every second
@@ -209,4 +218,5 @@ const startTimer = () => {
 prepareCanvases()
 saveState()
 prepareToolbar()
+prepareModals()
 startTimer()
