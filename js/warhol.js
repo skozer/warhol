@@ -18,6 +18,7 @@ const idleTimeout = 60 // 60 seconds
 
 // Initialize mouse coordinates to (0, 0)
 let mouse = {x: 0, y: 0}
+let isPaint = false
 let shade = 'dark'
 let radius = 5
 let idleTime = 0
@@ -26,6 +27,7 @@ let idleInterval
 // Paint
 const paint = () => {
   idleTime = 0
+  isPaint = true
   context.forEach(ctx => {
     const id = ctx.canvas.dataset.id
     const colour = colours[shade][id]
@@ -85,12 +87,19 @@ const handleMouseMove = e => {
 
 // When mouse lifts up, line stops painting
 const handleMouseUp = e => {
-  saveState()
+  if (isPaint) {
+    saveState()
+  }
+  isPaint = false
   e.target.removeEventListener('mousemove', paint, false)
 }
 
 // When mouse leaves canvas, line stops painting
 const handleMouseOut = e => {
+  if (isPaint) {
+    saveState()
+  }
+  isPaint = false
   e.target.removeEventListener('mousemove', paint, false)
 }
 
@@ -147,7 +156,6 @@ const handleStateChange = () => {
 
 // Set the background colour
 const handleClearCanvas = (evt, clearHistory = false) => {
-  console.log('clearing canvas')
   context.forEach(ctx => {
     const id = ctx.canvas.dataset.id
     ctx.fillStyle = colours.background[id]
