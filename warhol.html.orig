@@ -1,10 +1,32 @@
 <!doctype html>
 <html lang="en-US">
 <head>
-    <meta charset="UTF-8">
-    <title>Warhol Canvas</title>
+<<<<<<< HEAD
+	<meta charset="UTF-8">
+	<title>Warhol Canvas</title>
   <link rel="stylesheet" href="css/warhol.css" />
   <link rel="stylesheet" href="css/micromodal.css" />
+</head>
+<body>
+
+  <div id="app">
+
+    <canvas data-id="0" width="300" height="350"></canvas>
+    <canvas data-id="1" width="300" height="350"></canvas>
+    <canvas data-id="2" width="300" height="350"></canvas>
+    <br />
+    <canvas data-id="3" width="300" height="350"></canvas>
+    <canvas data-id="4" width="300" height="350"></canvas>
+    <canvas data-id="5" width="300" height="350"></canvas>
+
+    <div id="shades" class="toolbar">
+      <button data-shade="dark" type="button">Dark</button>
+      <button data-shade="light" type="button">Light</button>
+      <button data-shade="background" type="button">Eraser</button>
+=======
+    <meta charset="UTF-8">
+    <title>Warhol Canvas</title>
+    <link rel="stylesheet" href="warhol.css"/>
 </head>
 <body>
 
@@ -29,6 +51,7 @@
         <div class="canvas c5">
             <canvas data-id="5"></canvas>
         </div>
+>>>>>>> hg-kioskFrontEnd
     </div>
     <!--Toolbar-->
     <div class="tools">
@@ -61,7 +84,10 @@
             <img src="img/tools/delete.svg">
         </div>
 
+<<<<<<< HEAD
     <button id="undo" type="button" disabled>Undo</button>
+    <button id="clear" type="button">Clear</button>
+=======
         <div id="sizes" class="toolbar">
             <button data-radius="2" type="button">Small</button>
             <button data-radius="5" type="button">Normal</button>
@@ -73,11 +99,15 @@
             <button data-shade="light" type="button">Light</button>
             <button data-shade="background" type="button">Eraser</button>
         </div>
+>>>>>>> hg-kioskFrontEnd
 
         <button id="clear" type="button">Clear</button>
     </div>
 </div>
 
+
+
+<<<<<<< HEAD
 <div id="welcome-modal" class="modal micromodal-slide" aria-hidden="true">
   <div class="modal__overlay" tabindex="-1" data-micromodal-close>
     <div class="modal__container" role="dialog" aria-modal="true" aria-labelledby="welcome-modal-title" >
@@ -121,5 +151,8 @@
 
   <script type="text/javascript" src="js/micromodal.min.js"></script>
   <script type="text/javascript" src="js/warhol.js"></script>
+=======
+<script type="text/javascript" src="warhol.js"></script>
+>>>>>>> hg-kioskFrontEnd
 </body>
 </html>
