@@ -14,14 +14,18 @@ const colours = {
   light: ['#8cb21d', '#fefb00', '#f693c3', '#7dbbf4', '#fcfafb', '#fcfea8'],
   background: ['#fefa08', '#0279ea', '#281f80', '#ee8609', '#e30f21', '#90b70b'],
 }
+const idleTimeout = 60 // 60 seconds
 
 // Initialize mouse coordinates to (0, 0)
 let mouse = {x: 0, y: 0}
 let shade = 'dark'
 let radius = 5
+let idleTime = 0
+let idleInterval
 
 // Paint
 const paint = () => {
+  idleTime = 0
   context.forEach(ctx => {
     const id = ctx.canvas.dataset.id
     const colour = colours[shade][id]
@@ -142,12 +146,21 @@ const handleStateChange = () => {
 }
 
 // Set the background colour
-const handleClearCanvas = () => {
+const handleClearCanvas = (evt, clearHistory = false) => {
+  console.log('clearing canvas')
   context.forEach(ctx => {
     const id = ctx.canvas.dataset.id
     ctx.fillStyle = colours.background[id]
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
   })
+  if (clearHistory) {
+    history.length = 0
+    MicroModal.show('welcome-modal', {
+      onShow: () => clearInterval(idleInterval),
+      onClose: startTimer,
+      awaitCloseAnimation: true,
+    })
+  }
   saveState()
 }
 
@@ -194,6 +207,41 @@ const prepareToolbar = () => {
   document.querySelector('#sizes').addEventListener('click', handleSizeClick)
 }
 
+const prepareModals = () => {
+  document.getElementById('reset-canvas').addEventListener('click', evt => {
+    handleClearCanvas(evt, true)
+    clearInterval(idleInterval)
+  })
+  MicroModal.show('welcome-modal', {
+    onShow: () => clearInterval(idleInterval),
+    onClose: startTimer,
+    awaitCloseAnimation: true,
+  })
+}
+
+const startTimer = () => {
+  idleTime = 0
+  clearInterval(idleInterval)
+  idleInterval = setInterval(() => {
+    idleTime++
+    console.log(idleTime)
+    if (idleTime > idleTimeout) {
+      MicroModal.show('inactivity-modal', {
+        onClose: () => {
+          const el = document.getElementById('welcome-modal')
+          if (!el.classList.contains('is-open')) {
+            // Start the timer on if the welcome modal isn't open
+            startTimer()
+          }
+        },
+        awaitCloseAnimation: true,
+      })
+      clearInterval(idleInterval)
+    }
+  }, 1000) // increment the idle time every second
+}
+
 prepareCanvases()
 saveState()
 prepareToolbar()
+prepareModals()
