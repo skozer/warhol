@@ -21,9 +21,11 @@ let mouse = {x: 0, y: 0}
 let shade = 'dark'
 let radius = 5
 let idleTime = 0
+let idleInterval
 
 // Paint
 const paint = () => {
+  idleTime = 0
   context.forEach(ctx => {
     const id = ctx.canvas.dataset.id
     const colour = colours[shade][id]
@@ -145,6 +147,7 @@ const handleStateChange = () => {
 
 // Set the background colour
 const handleClearCanvas = (evt, clearHistory = false) => {
+  console.log('clearing canvas')
   context.forEach(ctx => {
     const id = ctx.canvas.dataset.id
     ctx.fillStyle = colours.background[id]
@@ -152,7 +155,11 @@ const handleClearCanvas = (evt, clearHistory = false) => {
   })
   if (clearHistory) {
     history.length = 0
-    MicroModal.show('welcome-modal')
+    MicroModal.show('welcome-modal', {
+      onShow: () => clearInterval(idleInterval),
+      onClose: startTimer,
+      awaitCloseAnimation: true,
+    })
   }
   saveState()
 }
@@ -201,15 +208,34 @@ const prepareToolbar = () => {
 }
 
 const prepareModals = () => {
-  document.getElementById('reset-canvas').addEventListener('click', evt => (handleClearCanvas(evt, true)))
-  MicroModal.show('welcome-modal')
+  document.getElementById('reset-canvas').addEventListener('click', evt => {
+    handleClearCanvas(evt, true)
+    clearInterval(idleInterval)
+  })
+  MicroModal.show('welcome-modal', {
+    onShow: () => clearInterval(idleInterval),
+    onClose: startTimer,
+    awaitCloseAnimation: true,
+  })
 }
 
 const startTimer = () => {
+  idleTime = 0
+  clearInterval(idleInterval)
   idleInterval = setInterval(() => {
     idleTime++
+    console.log(idleTime)
     if (idleTime > idleTimeout) {
-      MicroModal.show('inactivity-modal')
+      MicroModal.show('inactivity-modal', {
+        onClose: () => {
+          const el = document.getElementById('welcome-modal')
+          if (!el.classList.contains('is-open')) {
+            // Start the timer on if the welcome modal isn't open
+            startTimer()
+          }
+        },
+        awaitCloseAnimation: true,
+      })
       clearInterval(idleInterval)
     }
   }, 1000) // increment the idle time every second
@@ -219,4 +245,3 @@ prepareCanvases()
 saveState()
 prepareToolbar()
 prepareModals()
-startTimer()
