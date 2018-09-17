@@ -14,11 +14,13 @@ const colours = {
   light: ['#8cb21d', '#fefb00', '#f693c3', '#7dbbf4', '#fcfafb', '#fcfea8'],
   background: ['#fefa08', '#0279ea', '#281f80', '#ee8609', '#e30f21', '#90b70b'],
 }
+const idleTimeout = 60 // 60 seconds
 
 // Initialize mouse coordinates to (0, 0)
 let mouse = {x: 0, y: 0}
 let shade = 'dark'
 let radius = 5
+let idleTime = 0
 
 // Paint
 const paint = () => {
@@ -194,6 +196,17 @@ const prepareToolbar = () => {
   document.querySelector('#sizes').addEventListener('click', handleSizeClick)
 }
 
+const startTimer = () => {
+  idleInterval = setInterval(() => {
+    idleTime++
+    if (idleTime > idleTimeout) {
+      console.log('Time\'s up!')
+      clearInterval(idleInterval)
+    }
+  }, 1000) // increment the idle time every second
+}
+
 prepareCanvases()
 saveState()
 prepareToolbar()
+startTimer()
