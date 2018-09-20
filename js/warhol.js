@@ -8,13 +8,13 @@
 const numBoards = 6
 const maxStates = 10
 const context = new Array(numBoards)
-const history = new Array()
+const history = []
 const colours = {
   dark: ['#201f7c', '#ec027b', '#e9061d', '#7d4292', '#212025', '#ed6c03'],
   light: ['#8cb21d', '#fefb00', '#f693c3', '#7dbbf4', '#fcfafb', '#fcfea8'],
   background: ['#fefa08', '#0279ea', '#281f80', '#ee8609', '#e30f21', '#90b70b'],
 }
-const idleTimeout = 60 // 60 seconds
+const idleTimeout = 60000 // 60 seconds
 
 // Initialize mouse coordinates to (0, 0)
 let mouse = {x: 0, y: 0}
@@ -148,21 +148,21 @@ const handleUndo = () => {
 // Handle state change
 const handleStateChange = () => {
   if (history.length > 1) {
-    document.getElementById('undo').removeAttribute('disabled')
+    document.getElementById('undo').classList.remove('disabled')
   } else {
-    document.getElementById('undo').setAttribute('disabled', 'disabled')
+    document.getElementById('undo').classList.add('disabled')
   }
 }
 
 // Set the background colour
-const handleClearCanvas = (evt, clearHistory = false) => {
+const handleClearCanvas = (clearHistory = false) => {
+  history.length = 0
   context.forEach(ctx => {
     const id = ctx.canvas.dataset.id
     ctx.fillStyle = colours.background[id]
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
   })
   if (clearHistory) {
-    history.length = 0
     MicroModal.show('welcome-modal', {
       onShow: () => clearInterval(idleInterval),
       onClose: startTimer,
@@ -174,29 +174,49 @@ const handleClearCanvas = (evt, clearHistory = false) => {
 
 // Set the shade of the brush
 const handleShadeClick = e => {
-  if (e.target.tagName === 'BUTTON') {
+  if (e.target.tagName === 'IMG') {
+    document.querySelector('#shades').querySelector('.active').classList.remove('active')
     shade = e.target.dataset.shade
+    e.target.classList.add('active')
   }
 }
 
 // Set the size of the brush
 const handleSizeClick = e => {
-  if (e.target.tagName === 'BUTTON') {
-    radius = e.target.dataset.radius
+  if (e.target.tagName === 'IMG') {
+      document.querySelector('#sizes').querySelector('.active').classList.remove('active')
+      radius = e.target.dataset.radius
+      e.target.classList.add('active')
   }
 }
 
+// show help modal
+const handleHelp = () => {
+  MicroModal.show('welcome-modal')
+}
+
+// change background
+const handleBackgroundClick = e => {
+    if (e.target.tagName === 'IMG') {
+      document.querySelector('#backgrounds').querySelector('.active').classList.remove('active')
+      let cv = document.querySelectorAll('.canvas')
+      cv.forEach(c => {
+        c.style.backgroundImage = `url("${e.target.dataset.bg}")`
+      })
+      e.target.classList.add('active')
+    }
+}
 
 // Load the contexts into memory and add event listeners to the canvases
 const prepareCanvases = () => {
-  for (id = 0; id < numBoards; id++) {
+  for (let id = 0; id < numBoards; id++) {
     const canvas = document.querySelector(`canvas[data-id="${id}"]`)
     const ctx = canvas.getContext('2d')
     context[id] = ctx
 
     // Set size of canvas
-    canvas.width = canvas.clientWidth;
-    canvas.height = canvas.clientHeight;
+    canvas.width = canvas.clientWidth
+    canvas.height = canvas.clientHeight
 
     // Set the background colour
     ctx.fillStyle = colours.background[id]
@@ -214,15 +234,17 @@ const prepareCanvases = () => {
 }
 
 const prepareToolbar = () => {
-  document.querySelector('#clear').addEventListener('click', handleClearCanvas)
+  document.querySelector('#clear').addEventListener('click', () => {handleClearCanvas(false)})
   document.querySelector('#undo').addEventListener('click', handleUndo)
   document.querySelector('#shades').addEventListener('click', handleShadeClick)
   document.querySelector('#sizes').addEventListener('click', handleSizeClick)
+  document.querySelector('#help').addEventListener('click', handleHelp)
+  document.querySelector('#backgrounds').addEventListener('click', handleBackgroundClick)
 }
 
 const prepareModals = () => {
   document.getElementById('reset-canvas').addEventListener('click', evt => {
-    handleClearCanvas(evt, true)
+    handleClearCanvas(true)
     clearInterval(idleInterval)
   })
   MicroModal.show('welcome-modal', {
@@ -239,17 +261,28 @@ const startTimer = () => {
     idleTime++
     console.log(idleTime)
     if (idleTime > idleTimeout) {
-      MicroModal.show('inactivity-modal', {
-        onClose: () => {
-          const el = document.getElementById('welcome-modal')
-          if (!el.classList.contains('is-open')) {
-            // Start the timer on if the welcome modal isn't open
+      const inactivityModal = document.getElementById('inactivity-modal')
+      if (inactivityModal.classList.contains('is-open')){
+        MicroModal.close('inactivity-modal')
+        handleClearCanvas(true)
+      } else {
+        startTimer()
+        MicroModal.show('inactivity-modal', {
+          onShow: () => {
+            clearInterval(idleInterval)
             startTimer()
-          }
-        },
-        awaitCloseAnimation: true,
-      })
-      clearInterval(idleInterval)
+          },
+          onClose: () => {
+            const el = document.getElementById('welcome-modal')
+            if (!el.classList.contains('is-open')) {
+              // Start the timer on if the welcome modal isn't open
+              startTimer()
+            }
+          },
+          awaitCloseAnimation: true
+        })
+        console.log('hello?')
+      }
     }
   }, 1000) // increment the idle time every second
 }

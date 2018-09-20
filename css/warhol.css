@@ -34,7 +34,12 @@ body {
   grid-template-areas: ". . . . ." ". app . tools ." ". . . . .";
 }
 
-.tools { grid-area: tools; }
+.tools {
+  grid-area: tools;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
 
 #app {
   grid-area: app;
@@ -62,26 +67,52 @@ canvas {
 }
 
 .canvas {
-  background-image: url("../img/bg/mao-zedong.jpg");
+  background-image: url("../img/bg/marilyn-monroe.jpg");
   background-size: cover;
 }
 
+.toolbar {
+  display: flex;
+  justify-content: space-between;
+}
+
 .toolbar img {
-  padding: 10px;
-  height: 70px;
-  width: 70px;
+  padding: 0.7vw;
+  height: 5vw;
+  width: 5vw;
   border-radius:50%;
-  border: 3px solid black;
+  border: 0.3vw solid black;
   background-color: white;
 }
 
-.toolbar-tool {
+.active {
+  border: 0.3vw solid yellow !important;
+}
 
+.disabled {
+  pointer-events: none;
+  border: 0.3vw solid grey !important;
+}
+
+.dark {
+  background-image: url("../img/tools/dark.png");
+  background-size: cover;
+}
+.light {
+  background-image: url("../img/tools/light.png");
+  background-size: cover;
+}
+.background {
+  background-image: url("../img/tools/background.png");
+  background-size: cover;
+}
+
+#clear {
+  border: 0.3vw solid red !important;
 }
 
 .header {
   text-align: center;
-  padding-bottom: 20px;
 }
 
 h1 {

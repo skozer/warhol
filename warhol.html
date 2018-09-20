@@ -36,45 +36,27 @@
             <h1>Pop Art</h1>
             <h2>Andy Warhol</h2>
         </div>
-        <div id="tool" class="toolbar">
-            <img src="img/tools/pencil.svg">
-            <img src="img/tools/eraser.svg">
+        <div id="shades" class="toolbar">
+            <img data-shade="light" class="light" src="img/tools/pencil.svg">
+            <img data-shade="dark" class="dark active" src="img/tools/pencil.svg">
+            <img data-shade="background" class="background" src="img/tools/eraser.svg">
         </div>
-        <div id="size" class="toolbar">
-            <img src="img/tools/circle.svg">
-            <img src="img/tools/circle.svg">
-            <img src="img/tools/circle.svg">
-            <img src="img/tools/circle.svg">
-        </div>
-        <div id="shade" class="toolbar">
-            <img src="img/tools/colourwheel.jpg">
-            <img src="img/tools/colourwheel.jpg">
-            <img src="img/tools/colourwheel.jpg">
-        </div>
-        <div id="bg" class="toolbar">
-            <img src="img/bg/marilyn-monroe.jpg">
-            <img src="img/bg/mao-zedong.jpg">
+        <div id="sizes" class="toolbar">
+            <img data-radius="2" class="small" src="img/tools/small.svg">
+            <img data-radius="5" class="normal active" src="img/tools/normal.svg">
+            <img data-radius="10" class="large" src="img/tools/large.svg">
+            <img data-radius="20" class="huge" src="img/tools/huge.svg">
         </div>
         <div id="action" class="toolbar">
-            <img src="img/tools/help.svg">
-            <img src="img/tools/undo.svg">
-            <img src="img/tools/delete.svg">
+            <img id="help" src="img/tools/help.svg">
+            <img id="undo" class="disabled" src="img/tools/undo.svg">
+            <img id="clear" src="img/tools/delete.svg">
         </div>
-
-    <button id="undo" type="button" disabled>Undo</button>
-        <div id="sizes" class="toolbar">
-            <button data-radius="2" type="button">Small</button>
-            <button data-radius="5" type="button">Normal</button>
-            <button data-radius="10" type="button">Large</button>
-            <button data-radius="20" type="button">Huge</button>
+        <div id="backgrounds" class="toolbar">
+            <img data-bg="../img/bg/marilyn-monroe.jpg" class="active" src="img/bg/marilyn-monroe.jpg">
+            <img data-bg="../img/bg/mao-zedong.jpg" src="img/bg/mao-zedong.jpg">
+            <img data-bg="../img/bg/Andy-warhol.jpg" src="img/bg/andy-warhol.jpg">
         </div>
-        <div id="shades" class="toolbar">
-            <button data-shade="dark" type="button">Dark</button>
-            <button data-shade="light" type="button">Light</button>
-            <button data-shade="background" type="button">Eraser</button>
-        </div>
-
-        <button id="clear" type="button">Clear</button>
     </div>
 </div>
 
@@ -88,7 +70,7 @@
         <button class="modal__close" aria-label="Close modal" data-micromodal-close></button>
       </header>
       <main class="modal__content" id="welcome-modal-content">
-        <img src="img/inspiration.png" width="100%">
+        <img src="img/inspiration.png">
         <p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
         incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud
         exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
