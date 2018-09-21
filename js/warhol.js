@@ -1,26 +1,22 @@
-// Inspired by:
-// http://www.williammalone.com/articles/create-html5-canvas-javascript-drawing-app/#demo-simple
-// https://hacks.mozilla.org/2009/06/pop-art-video/
-// http://bencentra.com/code/2014/12/05/html5-canvas-touch-events.html
-// https://github.com/demihe/HTML5-Canvas-Paint-Application
-// https://developer.mozilla.org/en-US/docs/Web/API/Canvas_API/Tutorial/Optimizing_canvas
-
-const numBoards = 6
-const maxStates = 10
-const context = new Array(numBoards)
-const history = []
-const colours = {
+// Config constants
+const NUM_BOARDS = 6
+const MAX_STATES = 10
+const COLOURS = {
   dark: ['#201f7c', '#ec027b', '#e9061d', '#7d4292', '#212025', '#ed6c03'],
   light: ['#8cb21d', '#fefb00', '#f693c3', '#7dbbf4', '#fcfafb', '#fcfea8'],
   background: ['#fefa08', '#0279ea', '#281f80', '#ee8609', '#e30f21', '#90b70b'],
 }
-const idleTimeout = 60000 // 60 seconds
+const IDLE_TIMEOUT = 60 // 60 seconds
+
+// State constants
+const context = new Array(NUM_BOARDS)
+const history = []
 
 // Initialize mouse coordinates to (0, 0)
 let mouse = {x: 0, y: 0}
 let isPaint = false
 let shade = 'dark'
-let radius = 5
+let radius = 20
 let idleTime = 0
 let idleInterval
 
@@ -30,7 +26,7 @@ const paint = () => {
   isPaint = true
   context.forEach(ctx => {
     const id = ctx.canvas.dataset.id
-    const colour = colours[shade][id]
+    const colour = COLOURS[shade][id]
 
     ctx.lineTo(mouse.x, mouse.y)
     ctx.lineWidth = radius
@@ -47,8 +43,8 @@ const saveState = () => {
     ctx => ctx.getImageData(0, 0, ctx.canvas.width, ctx.canvas.height)
   )
   history.unshift(currentState)
-  if (history.length > maxStates) {
-    history.length = maxStates
+  if (history.length > MAX_STATES) {
+    history.length = MAX_STATES
   }
 
   handleStateChange()
@@ -159,7 +155,7 @@ const handleClearCanvas = (clearHistory = false) => {
   history.length = 0
   context.forEach(ctx => {
     const id = ctx.canvas.dataset.id
-    ctx.fillStyle = colours.background[id]
+    ctx.fillStyle = COLOURS.background[id]
     ctx.fillRect(0, 0, ctx.canvas.width, ctx.canvas.height)
   })
   if (clearHistory) {
@@ -175,7 +171,7 @@ const handleClearCanvas = (clearHistory = false) => {
 // Set the shade of the brush
 const handleShadeClick = e => {
   if (e.target.tagName === 'IMG') {
-    document.querySelector('#shades').querySelector('.active').classList.remove('active')
+    document.querySelector('#shades .active').classList.remove('active')
     shade = e.target.dataset.shade
     e.target.classList.add('active')
   }
@@ -184,7 +180,7 @@ const handleShadeClick = e => {
 // Set the size of the brush
 const handleSizeClick = e => {
   if (e.target.tagName === 'IMG') {
-      document.querySelector('#sizes').querySelector('.active').classList.remove('active')
+      document.querySelector('#sizes .active').classList.remove('active')
       radius = e.target.dataset.radius
       e.target.classList.add('active')
   }
@@ -192,24 +188,24 @@ const handleSizeClick = e => {
 
 // show help modal
 const handleHelp = () => {
-  MicroModal.show('welcome-modal')
+  MicroModal.show('welcome-modal', {awaitCloseAnimation: true})
 }
 
 // change background
 const handleBackgroundClick = e => {
     if (e.target.tagName === 'IMG') {
-      document.querySelector('#backgrounds').querySelector('.active').classList.remove('active')
+      document.querySelector('#backgrounds .active').classList.remove('active')
       let cv = document.querySelectorAll('.canvas')
-      cv.forEach(c => {
+      cv.forEach(c => (
         c.style.backgroundImage = `url("${e.target.dataset.bg}")`
-      })
+      ))
       e.target.classList.add('active')
     }
 }
 
 // Load the contexts into memory and add event listeners to the canvases
 const prepareCanvases = () => {
-  for (let id = 0; id < numBoards; id++) {
+  for (let id = 0; id < NUM_BOARDS; id++) {
     const canvas = document.querySelector(`canvas[data-id="${id}"]`)
     const ctx = canvas.getContext('2d')
     context[id] = ctx
@@ -219,7 +215,7 @@ const prepareCanvases = () => {
     canvas.height = canvas.clientHeight
 
     // Set the background colour
-    ctx.fillStyle = colours.background[id]
+    ctx.fillStyle = COLOURS.background[id]
     ctx.fillRect(0, 0, canvas.width, canvas.height)
 
     // Event listeners that will trigger the paint functions
@@ -260,28 +256,29 @@ const startTimer = () => {
   idleInterval = setInterval(() => {
     idleTime++
     console.log(idleTime)
-    if (idleTime > idleTimeout) {
+    if (idleTime > IDLE_TIMEOUT) {
       const inactivityModal = document.getElementById('inactivity-modal')
-      if (inactivityModal.classList.contains('is-open')){
+      if (inactivityModal.classList.contains('is-open')) {
+        // User has not dismissed the inactivity modal,
+        // therefore clear the canvas
         MicroModal.close('inactivity-modal')
         handleClearCanvas(true)
       } else {
-        startTimer()
         MicroModal.show('inactivity-modal', {
           onShow: () => {
+            // Start a new timer when the inactivity modal is shown
             clearInterval(idleInterval)
             startTimer()
           },
           onClose: () => {
-            const el = document.getElementById('welcome-modal')
-            if (!el.classList.contains('is-open')) {
-              // Start the timer on if the welcome modal isn't open
+            const welcomeModal = document.getElementById('welcome-modal')
+            if (!welcomeModal.classList.contains('is-open')) {
+              // Start the timer if the welcome modal isn't open
               startTimer()
             }
           },
           awaitCloseAnimation: true
         })
-        console.log('hello?')
       }
     }
   }, 1000) // increment the idle time every second
