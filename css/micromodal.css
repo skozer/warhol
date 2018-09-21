@@ -21,7 +21,7 @@
   .modal__container {
     background-color: #fff;
     padding: 30px;
-    max-width: 500px;
+    max-width: 650px;
     max-height: 90vh;
     border-radius: 4px;
     overflow-y: scroll;
@@ -98,10 +98,15 @@
   .modal__btn-primary {
     background-color: #00449e;
     color: #fff;
+    font-weight: bold;
   }
 
   #welcome-modal-content img {
     max-width: 100%;
+    max-height: 200px;
+    display: block;
+    margin: 0 auto;
+    margin-bottom: 20px;
   }
 
 
