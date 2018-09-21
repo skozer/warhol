@@ -2,7 +2,7 @@
 const NUM_BOARDS = 6
 const MAX_STATES = 10
 const COLOURS = {
-  dark: ['#201f7c', '#ec027b', '#e9061d', '#7d4292', '#212025', '#ed6c03'],
+  dark: ['#201f7c', '#ec027b', '#e9061d', '#7d4292', '#404b9c', '#ed6c03'],
   light: ['#8cb21d', '#fefb00', '#f693c3', '#7dbbf4', '#fcfafb', '#fcfea8'],
   background: ['#fefa08', '#0279ea', '#281f80', '#ee8609', '#e30f21', '#90b70b'],
 }
